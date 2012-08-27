@@ -1,0 +1,6 @@
+ipdb
+Flask
+Flask-WTF
+flask-mongoengine
+Flask-Login
+eventlet

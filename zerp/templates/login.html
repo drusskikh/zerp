@@ -1,0 +1,61 @@
+{% extends 'layout.html' %}
+
+{% block title %}Login page{% endblock %}
+
+{% block content %}
+  <div class="container">
+
+    {% if g.args.error_msg %}
+
+    <div class="raw">
+      <div class="span6 offset3">
+        <div class="alert">
+          <button type="button" class="close" data-dismiss="alert">×</button>
+          <strong>Warning!</strong> {{g.args.error_msg}}
+        </div>
+      </div>
+    </div>
+
+   {% endif %}
+
+    <div class="raw">
+
+      <div class="span6 offset3">
+        <div class="well">
+
+          {% if not g.is_authenticated %}
+            <form method="POST">
+              <legend><h2>Sign in</h2></legend>
+
+              {% macro field(field_name) %}
+              <div class="control-group {% if form.errors[field_name] %} error {% endif %}">
+                <div class="controls">
+                {{ form[field_name](class="input-xlarge", id="inputError", placeholder=form[field_name].label.text) }}
+                  {% if form.errors[field_name] %}
+                    {% for error in form.errors[field_name] %}
+                      <span class="help-inline">{{ error }}</span>
+                    {% endfor %}
+                  {% endif %}
+                </div>
+              </div>
+              {% endmacro %} 
+
+              {{ field("username") }}
+              {{ field("password") }}
+
+              <p><button type="submit" class="btn btn-primary btn-large">Sign in</button></p>
+          </form>
+
+        {% else %}
+
+          <p class="lead">You are allready logged in</p>
+          <p><a class="btn btn-danger btn-large" href="{{ url_for("auth.logout") }}">Sign out</a></p>
+
+        {% endif %}
+
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /container -->
+{% endblock %}
