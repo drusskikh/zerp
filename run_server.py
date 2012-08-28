@@ -1,11 +1,17 @@
 #!/usr/bin/env python
 
+import os
 import sys
+import subprocess
 
 import eventlet
 from eventlet import wsgi
 
 from zerp import app
+
+
+subprocess.call(['find', 'zerp/', '-name', '*.pyc', '-delete'])
+
 
 if len(sys.argv) == 2 and sys.argv[1] == 'eventlet':
     print 'Running eventlet server...'

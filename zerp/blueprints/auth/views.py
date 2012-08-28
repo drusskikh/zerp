@@ -1,9 +1,9 @@
 from flask import request, redirect, render_template, url_for, g
 from flask.ext.login import login_required, login_user, logout_user
 
-from auth import bprint as auth
-from auth import authenticate
-from auth.forms import LoginForm
+from zerp.blueprints.auth import bprint as auth
+from zerp.blueprints.auth import authenticate
+from zerp.blueprints.auth.forms import LoginForm
 
 
 @auth.route('/login', methods=['GET', 'POST'])

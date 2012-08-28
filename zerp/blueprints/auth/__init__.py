@@ -40,4 +40,4 @@ def authenticate(username, password):
         return None
 
 
-import auth.views
+import zerp.blueprints.auth.views

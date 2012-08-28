@@ -1,41 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from mongokit import Document, Connection
 
+from ..zerp import db
 
-db = Connection()
-
-
-@db.register
-class User(Document):
-    __collection__ = 'users'
-    __database__ = 'zerp'
-
-    structure = {
-        'name': unicode,
-        'password': unicode,
-        'role': unicode,
-        'first_name': unicode,
-        'second_name': unicode,
-        'phone': unicode
-    }
-
-
-@db.register
-class Client(Document):
-    __collection__ = 'clients'
-    __database__ = 'zerp'
-
-    structure = {
-        'name': unicode,
-        'address': [unicode],
-        'phone': [unicode]
-    }
-
-
-#import ipdb; ipdb.set_trace()
-
-db.drop_database('zerp')
 
 user1 = db.User(
         {
