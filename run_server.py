@@ -26,7 +26,7 @@ elif len(sys.argv) == 2 and sys.argv[1] == 'gevent':
 
     monkey.patch_all()
     pool = ge_pool.Pool()
-    server=ge_wsgi.WSGIServer(('0.0.0.0', 5000), app, spawn=pool)
+    server = ge_wsgi.WSGIServer(('0.0.0.0', 5000), app, spawn=pool)
     server.serve_forever()
 
 else:
