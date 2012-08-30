@@ -8,7 +8,8 @@ from zerp.db import redis
 
 bprint = Blueprint('auth', __name__)
 
-login_manager = LoginManager('auth.login')
+login_manager = LoginManager()
+login_manager.login_view = 'auth.login'
 
 
 class User(UserMixin):
