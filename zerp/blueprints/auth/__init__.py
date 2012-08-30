@@ -43,8 +43,8 @@ USERS_BY_ID = {
 
 
 @login_manager.user_loader
-def load_user(authtoken):
-    user_id = redis.get('token:{}'.format(authtoken))
+def load_user(token):
+    user_id = redis.get('token:{}'.format(token))
     if user_id:
         return USERS_BY_ID.get(int(user_id))
     return None
