@@ -12,4 +12,9 @@ app.register_blueprint(auth)
 from zerp.blueprints.auth import login_manager
 login_manager.setup_app(app)
 
+from zerp.blueprints.tools import bprint as tools
+app.register_blueprint(tools)
+
+import zerp.admin
+import zerp.db
 import zerp.views

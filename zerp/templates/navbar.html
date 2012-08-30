@@ -33,7 +33,7 @@
           <li><a href="#">Commercial</a></li>
           <li><a href="#">Statistic</a></li>
           {% if g.is_admin%}
-          <li><a href="#">Admin page</a></li>
+          <li><a href=" {{ url_for('admin.index') }} ">Admin page</a></li>
           {% endif %}
 
         </ul>

@@ -1,4 +1,4 @@
-from flask.ext.mongokit import MongoKit, Document, IS
+from flask.ext.mongokit import MongoKit, Document
 
 from zerp import app
 
@@ -13,7 +13,7 @@ class User(Document):
     structure = {
         'name': unicode,
         'password': unicode,
-        'role': IS(u'admin', u'operator', u'executant'),
+        'role': unicode,
         'first_name': unicode,
         'second_name': unicode,
         'phone': unicode

@@ -2,11 +2,14 @@ from flask import g, render_template
 from flask.ext.login import current_user, login_required
 
 from zerp import app
+from zerp.db import db
 
 
 @app.before_request
 def check_is_authenticated():
     g.is_authenticated = current_user.is_authenticated()
+    g.is_admin = False
+    g.current_user = None
 
     if g.is_authenticated:
         g.current_user = current_user
@@ -15,10 +18,7 @@ def check_is_authenticated():
 
 @app.route('/')
 def index():
-    if g.is_authenticated:
-        return render_template('index.html')
-    else:
-        return render_template('index.html')
+    return render_template('index.html')
 
 
 @app.route('/secret')

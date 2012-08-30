@@ -2,4 +2,5 @@ Flask
 Flask-WTF
 Flask-MongoKit
 Flask-Login
+Flask-Admin
 eventlet
