@@ -1,18 +1,32 @@
+import uuid
+
 from flask import Blueprint
-from flask.ext.login import LoginManager, UserMixin
+from flask.ext.tokenauth import LoginManager, UserMixin
+
+from zerp.db import redis
 
 
 bprint = Blueprint('auth', __name__)
 
-login_manager = LoginManager()
-login_manager.login_view = 'auth.login'
+login_manager = LoginManager('auth.login')
 
 
 class User(UserMixin):
-    def __init__(self, name, id):
+    def __init__(self, name, _id):
         self.name = name
-        self.id = id
+        self._id = _id
         self.role = 'admin'
+
+    def get_id(self):
+        return unicode(self._id)
+
+    def login(self):
+        token = uuid.uuid1()
+        redis.set('token:{}'.format(token), self.get_id())
+        return token
+
+    def logout(self, token):
+        redis.delete('token:{}'.format(token))
 
 
 USERS_BY_NAME = {
@@ -29,8 +43,11 @@ USERS_BY_ID = {
 
 
 @login_manager.user_loader
-def load_user(userid):
-    return USERS_BY_ID[int(userid)]
+def load_user(authtoken):
+    user_id = redis.get('token:{}'.format(authtoken))
+    if user_id:
+        return USERS_BY_ID.get(int(user_id))
+    return None
 
 
 def authenticate(username, password):
