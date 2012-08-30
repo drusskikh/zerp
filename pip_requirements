@@ -1,6 +1,8 @@
 Flask
 Flask-WTF
 Flask-MongoKit
-Flask-Login
+Flask-Redis
 Flask-Admin
+git+https://github.com/drusskikh/flask-tokenauth.git
 eventlet
+gevent
