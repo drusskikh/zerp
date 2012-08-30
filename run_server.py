@@ -19,11 +19,12 @@ if len(sys.argv) == 2 and sys.argv[1] == 'eventlet':
     wsgi.server(eventlet.listen(('0.0.0.0', 5000)), app)
 
 elif len(sys.argv) == 2 and sys.argv[1] == 'gevent':
+    print 'Running gevent server...'
+
     from gevent import pool as ge_pool
     from gevent import wsgi as ge_wsgi
     from gevent import monkey
 
-    print 'Running gevent server...'
     monkey.patch_all()
     pool = ge_pool.Pool()
     server=ge_wsgi.WSGIServer(('0.0.0.0', 5000), app, spawn=pool)
