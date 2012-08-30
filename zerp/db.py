@@ -1,8 +1,10 @@
 from flask.ext.mongokit import MongoKit, Document
+from flask.ext.redis import init_redis
 
 from zerp import app
 
 
+redis = init_redis(app)
 db = MongoKit(app)
 
 

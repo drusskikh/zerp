@@ -1,5 +1,5 @@
 from flask import request, redirect, render_template, url_for, g
-from flask.ext.login import login_required, login_user, logout_user
+from flask.ext.tokenauth import login_required, login_user, logout_user
 
 from zerp.blueprints.auth import bprint as auth
 from zerp.blueprints.auth import authenticate
