@@ -6,8 +6,6 @@ from zerp.db.models import User
 connection_pool = redis.ConnectionPool(max_connections=100)
 
 
-def validate_values(model_cls, values):
-    pass
 
 
 def get_connection():
@@ -18,7 +16,7 @@ class RedisAPI(object):
 
     def user_create(self, values):
 
-        validate_values(User, values)
+        User.validate(values)
         connection = get_connection()
         incr_key = '{}:incr'.format(User.get_model_name())
         _id = connection.incr(incr_key)
@@ -27,18 +25,16 @@ class RedisAPI(object):
         with connection.pipeline() as pipe:
             while True:
                 try:
-                    pipe.watch(user.index_key('name'))
+                    pipe.watch(user.uindex_key('name'))
 
-                    if pipe.hget(user.index_key('name'), values['name']):
+                    if pipe.hget(user.uindex_key('name'), values['name']):
                         raise Exception('Username must be unique.')
 
                     pipe.multi()
-                    pipe.set(user.name.key(), values['name'])
-                    pipe.rpush(user.address.key(), values['address'])
-                    pipe.rpush(user.phone.key(), values['phone'])
-                    pipe.hset(user.index_key('name'),
-                              values['name'],
-                              unicode(_id))
+                    pipe.set(user.name, values.get('name'))
+                    pipe.rpush(user.address, values.get('address'))
+                    pipe.rpush(user.phone, values.get('phone'))
+                    pipe.hset(user.uindex_key('name'), values.get('name'), _id)
 
                     pipe.execute()
                     break
@@ -50,14 +46,23 @@ class RedisAPI(object):
         pass
 
     def user_update(self, _id, values):
-        validate_values(User, values)
+        User.validate(values)
         connection = get_connection()
         user = User(_id)
 
-        with connection.lock('user:{_id}:lock'.format(_id=_id),
-                timeout=1) as lock:
+        with connection.lock('user:{_id}:lock'.format(_id=_id), timeout=1):
 
+            with connection.pipeline() as pipe:
 
+                if values.get('address'):
+                    pipe.delete(user.address)
+                    pipe.rpush(user.address, values.get('address'))
+
+                if values.get('phone'):
+                    pipe.delete(user.phone)
+                    pipe.rpush(user.phone, values.get('phone'))
+
+                pipe.execute()
 
     def user_find_by_id(self, _id):
         pass
