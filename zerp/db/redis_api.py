@@ -6,8 +6,6 @@ from zerp.db.models import User
 connection_pool = redis.ConnectionPool(max_connections=100)
 
 
-
-
 def get_connection():
     return redis.Redis(connection_pool=connection_pool)
 
@@ -18,23 +16,22 @@ class RedisAPI(object):
 
         User.validate(values)
         connection = get_connection()
-        incr_key = '{}:incr'.format(User.get_model_name())
-        _id = connection.incr(incr_key)
+        _id = connection.incr(User.incr())
         user = User(_id)
 
         with connection.pipeline() as pipe:
             while True:
                 try:
-                    pipe.watch(user.uindex_key('name'))
+                    pipe.watch(user.uindex('name'))
 
-                    if pipe.hget(user.uindex_key('name'), values['name']):
+                    if pipe.hget(user.uindex('name'), values['name']):
                         raise Exception('Username must be unique.')
 
                     pipe.multi()
-                    pipe.set(user.name, values.get('name'))
+                    pipe.set(user.name, values['name'])
                     pipe.rpush(user.address, values.get('address'))
                     pipe.rpush(user.phone, values.get('phone'))
-                    pipe.hset(user.uindex_key('name'), values.get('name'), _id)
+                    pipe.hset(user.uindex('name'), values['name'], _id)
 
                     pipe.execute()
                     break
@@ -50,17 +47,17 @@ class RedisAPI(object):
         connection = get_connection()
         user = User(_id)
 
-        with connection.lock('user:{_id}:lock'.format(_id=_id), timeout=1):
+        with connection.lock(user.lock(), timeout=5):
 
             with connection.pipeline() as pipe:
 
                 if values.get('address'):
                     pipe.delete(user.address)
-                    pipe.rpush(user.address, values.get('address'))
+                    pipe.rpush(user.address, values['address'])
 
                 if values.get('phone'):
                     pipe.delete(user.phone)
-                    pipe.rpush(user.phone, values.get('phone'))
+                    pipe.rpush(user.phone, values['phone'])
 
                 pipe.execute()
 

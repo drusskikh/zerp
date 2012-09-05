@@ -17,6 +17,10 @@ class Model(object):
     def get_model_name(cls):
         return cls._model_name
 
+    @classmethod
+    def incr(cls):
+        return '{model_name}:incr'.format(model_name=cls._model_name)
+
     def __getattr__(self, name):
         if name in self._structure:
             return '{model_name}:{_id}:{field_name}'.format(
@@ -26,15 +30,19 @@ class Model(object):
 
     def prefix(self):
         return '{model_name}:{_id}:'.format(model_name=self._model_name,
-                                            _id=self._if)
+                                            _id=self._id)
 
-    def index_key(self, field):
+    def index(self, field):
         return '{model_name}:index:{field}'.format(model_name=self._model_name,
                                                    field=field)
 
-    def uindex_key(self, field):
+    def uindex(self, field):
         return '{model_name}:uindex:{field}'.format(
             model_name=self._model_name, field=field)
+
+    def lock(self):
+        return '{model_name}:{_id}:lock'.format(
+            model_name=self._model_name, _id=self._id)
 
     def get_fields(self):
         return self._structure.keys()
@@ -58,4 +66,3 @@ class Client(Model):
         'address': list,
         'phone': list
     }
-
