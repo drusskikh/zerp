@@ -12,6 +12,7 @@ class Model(object):
 
     def __init__(self, _id):
         self._id = _id
+        self._template = self._model_name +':{}:{}'
 
     @classmethod
     def get_model_name(cls):
@@ -23,29 +24,19 @@ class Model(object):
 
     def __getattr__(self, name):
         if name in self._structure:
-            return '{model_name}:{_id}:{field_name}'.format(
-                model_name=self._model_name,
-                _id=self._id,
-                field_name=name)
+            return self._template.format(self._id, name)
 
     def prefix(self):
-        return '{model_name}:{_id}:'.format(model_name=self._model_name,
-                                            _id=self._id)
+        return self._template.format(self._id, '')
 
     def index(self, field):
-        return '{model_name}:index:{field}'.format(model_name=self._model_name,
-                                                   field=field)
+        return self._template.format('index', field)
 
     def uindex(self, field):
-        return '{model_name}:uindex:{field}'.format(
-            model_name=self._model_name, field=field)
+        return self._template.format('uindex', field)
 
     def lock(self):
-        return '{model_name}:{_id}:lock'.format(
-            model_name=self._model_name, _id=self._id)
-
-    def get_fields(self):
-        return self._structure.keys()
+        return self._template.format(self._id, 'lock')
 
     @classmethod
     def validate(cls, values):
